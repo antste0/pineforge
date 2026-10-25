@@ -42,3 +42,12 @@ pub fn nearest_color(lab: [f32; 3], palette: &[([u8; 3], [f32; 3])]) -> ([u8; 3]
         .min_by(|x, y| color_distance(lab, x.1).total_cmp(&color_distance(lab, y.1)))
         .unwrap()
 }
+
+// Replaces each pixel's color in place, leaving its alpha untouched
+pub fn map_colors(img: &mut image::RgbaImage, palette: &[([u8; 3], [f32; 3])]) {
+    for pixel in img.pixels_mut() {
+        let [r, g, b, a] = pixel.0;
+        let ([r, g, b], _) = nearest_color(rgb_to_oklab([r, g, b]), palette);
+        pixel.0 = [r, g, b, a];
+    }
+}
