@@ -53,3 +53,6 @@ pub fn dither(img: &mut image::RgbaImage, palette: &[([u8; 3], [f32; 3])]) {
         }
     }
 }
+
+#[cfg(test)]
+mod tests;

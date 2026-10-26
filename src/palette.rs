@@ -37,3 +37,6 @@ const fn hex_to_rgb(hex: u32) -> [u8; 3] {
     let rgb = [r, g, b];
     return rgb;
 }
+
+#[cfg(test)]
+mod tests;

@@ -1,5 +1,5 @@
 # pineforge
-Transform any image to fit the Rose Pine palette
+Transform any image to fit the Rose Pine palette, built in Rust
 
 ## Examples
 <table>
@@ -18,4 +18,6 @@ Transform any image to fit the Rose Pine palette
 - Relatively fast
 
 ## Features to add
+- Mixing colors from the palette with the one from the original image
 - Bulk transform
+- Ability to transform into all three palettes

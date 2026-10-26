@@ -34,3 +34,6 @@ impl Args {
         self.input.with_file_name(format!("{stem}_rosepine.{ext}"))
     }
 }
+
+#[cfg(test)]
+mod tests;

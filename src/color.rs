@@ -67,3 +67,6 @@ pub fn map_colors(img: &mut image::RgbaImage, palette: &[([u8; 3], [f32; 3])]) {
         pixel[..3].copy_from_slice(&[r, g, b]);
     });
 }
+
+#[cfg(test)]
+mod tests;
