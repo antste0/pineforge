@@ -20,6 +20,8 @@ fn main() {
         .expect("failed to open input file")
         .decode()
         .expect("failed to decode image");
+    println!("Processing {}", &args.input.display());
+
     // remember whether the original had transparency
     let has_alpha = img.color().has_alpha();
     // normalize every input format to 8-bit RGBA
