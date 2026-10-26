@@ -11,6 +11,8 @@ Transform any image to fit the Rose Pine palette
   </tr>
 </table>
 
+[image used](https://www.pexels.com/photo/historic-architecture-and-clock-tower-in-ghent-30223875/) by Danique Veldhuis
+
 ## Features
 - All the official Rose Pine palettes
 - Relatively fast
