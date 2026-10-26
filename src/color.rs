@@ -1,7 +1,7 @@
 // Pixel values aren't proportional to brightness - 128 is about a fifth of 255, not half
 // Colors have to be compared on real brightness, so this turns a 0-255 value into linear 0.0-1.0
 // Very dark values are scaled linearly, the rest go through a 2.4 power curve
-fn srgb_to_linear(c: u8) -> f32 {
+pub fn srgb_to_linear(c: u8) -> f32 {
     let c = c as f32 / 255.0;
     if c <= 0.04045 {
         c / 12.92
@@ -15,8 +15,11 @@ fn srgb_to_linear(c: u8) -> f32 {
 // This maps a color into a space where it does: [lightness, green-red, blue-yellow]
 // R, G, B are mixed into three channels (l, m, s), compressed with a cube root, then mixed again into the final three values
 pub fn rgb_to_oklab(rgb: [u8; 3]) -> [f32; 3] {
-    let [r, g, b] = rgb.map(srgb_to_linear);
+    linear_to_oklab(rgb.map(srgb_to_linear))
+}
 
+// Same as rgb_to_oklab, for colors already converted with srgb_to_linear
+pub fn linear_to_oklab([r, g, b]: [f32; 3]) -> [f32; 3] {
     let l = (0.4122214708 * r + 0.5363325363 * g + 0.0514459929 * b).cbrt();
     let m = (0.2119034982 * r + 0.6806995451 * g + 0.1073969566 * b).cbrt();
     let s = (0.0883024619 * r + 0.2817188376 * g + 0.6299787005 * b).cbrt();
