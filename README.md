@@ -13,11 +13,45 @@ Transform any image to fit the Rose Pine palette, built in Rust
 
 [image used](https://www.pexels.com/photo/historic-architecture-and-clock-tower-in-ghent-30223875/) by Danique Veldhuis
 
+The images in `examples/` and `thumbnails/` are from Pexels and are licensed under the [Pexels License](https://www.pexels.com/license/), not GPL.
+
 ## Features
-- All the official Rose Pine palettes
-- Relatively fast
+- All the official Rose Pine palettes (Rose Pine, Moon, Dawn)
+- Multithreaded for quick processing of large images
 
 ## Features to add
 - Mixing colors from the palette with the one from the original image
 - Bulk transform
 - Ability to transform into all three palettes
+
+## Installation
+Requires a [Rust toolchain](https://rustup.rs/), version 1.85 or newer.
+
+```sh
+git clone https://github.com/antste0/pineforge
+cd pineforge
+cargo build --release
+```
+
+The binary ends up in `target/release/pineforge`.
+
+### Older CPUs (pre-2015)
+On x86-64 the build targets CPUs from about 2015 onward (Intel Haswell, AMD Zen), which makes dithering about 2x faster. This however makes older CPUs unable to build or run the app. Build it for a generic x86-64 CPU instead:
+
+```sh
+RUSTFLAGS="-C target-cpu=x86-64" cargo build --release
+```
+
+## Usage
+```sh
+pineforge -i photo.jpg
+pineforge -i photo.jpg -o out.png -p m
+pineforge -i logo.png --no-dither
+```
+
+| Option | Description |
+| --- | --- |
+| `-i`, `--input <file>` | Image to transform (required) |
+| `-o`, `--output <file>` | Output file, defaults to `<name>_rosepine.<ext>` next to the input |
+| `-p`, `--palette <r\|m\|d>` | `r` Rose Pine (default), `m` Moon, `d` Dawn |
+| `--no-dither` | Disable Floyd-Steinberg dithering, better for flat graphics, logos and pixel art |
