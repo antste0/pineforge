@@ -2,10 +2,14 @@
 Transform any image to fit the Rose Pine palette
 
 ## Examples
-![original](./examples/pexels-daniqux-30223875.jpg)
-![Rose Pine](./examples/pexels-daniqux-30223875_rosepine.jpg)
-![Rose Pine Dawn](./examples/pexels-daniqux-30223875_dawn.jpg)
-![Rose Pine Moon](./examples/pexels-daniqux-30223875_moon.jpg)
+<table>
+  <tr>
+    <td align="center" width="25%"><img src="./examples/pexels-daniqux-30223875.jpg" width="100%" alt="Original"><br>Original</td>
+    <td align="center" width="25%"><img src="./examples/pexels-daniqux-30223875_rosepine.jpg" width="100%" alt="Rose Pine"><br>Rose Pine</td>
+    <td align="center" width="25%"><img src="./examples/pexels-daniqux-30223875_dawn.jpg" width="100%" alt="Rose Pine Dawn"><br>Rose Pine Dawn</td>
+    <td align="center" width="25%"><img src="./examples/pexels-daniqux-30223875_moon.jpg" width="100%" alt="Rose Pine Moon"><br>Rose Pine Moon</td>
+  </tr>
+</table>
 
 ## Features
 - All the official Rose Pine palettes
