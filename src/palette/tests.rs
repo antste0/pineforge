@@ -17,3 +17,12 @@ fn colors_are_unique() {
         }
     }
 }
+
+// The variants share some colors, but a fully identical table would mean a variant points at the wrong one
+#[test]
+fn variants_are_different_palettes() {
+    let [r, m, d] = Palette::ALL.map(|p| p.colors());
+    assert_ne!(r, m);
+    assert_ne!(r, d);
+    assert_ne!(m, d);
+}

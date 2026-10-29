@@ -21,6 +21,10 @@ pub struct Args {
     /// Disable Floyd-Steinberg dithering (better for flat graphics, logos, pixel art)
     #[arg(long = "no-dither", action = ArgAction::SetFalse)]
     pub dither: bool,
+
+    /// Generate all 3 palette variants, named <name>_rosepine_<main|moon|dawn>.<ext>
+    #[arg(long, conflicts_with = "palette")]
+    pub all: bool,
 }
 
 impl Args {
