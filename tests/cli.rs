@@ -100,3 +100,39 @@ fn missing_input_fails() {
         .status;
     assert!(!status.success());
 }
+
+#[test]
+fn all_writes_every_palette_variant() {
+    let dir = temp_dir("all_variants");
+    let input = dir.join("in.png");
+    gradient(false).save(&input).unwrap();
+
+    run(&["-i".as_ref(), input.as_os_str(), "--all".as_ref()]);
+
+    // each variant must be identical to running that palette on its own
+    for (suffix, palette) in [("main", "r"), ("moon", "m"), ("dawn", "d")] {
+        let single = dir.join(format!("single_{suffix}.png"));
+        run(&["-i".as_ref(), input.as_os_str(), "-o".as_ref(), single.as_os_str(), "-p".as_ref(), palette.as_ref()]);
+
+        let all = image::open(dir.join(format!("in_rosepine_{suffix}.png"))).unwrap().to_rgb8();
+        assert_eq!((all.width(), all.height()), (20, 10));
+        assert_eq!(all, image::open(&single).unwrap().to_rgb8(), "{suffix} differs from -p {palette}");
+    }
+}
+
+#[test]
+fn all_with_palette_fails() {
+    let dir = temp_dir("all_with_palette");
+    let input = dir.join("in.png");
+    gradient(false).save(&input).unwrap();
+
+    let out = Command::new(env!("CARGO_BIN_EXE_pineforge"))
+        .args(["-i".as_ref(), input.as_os_str(), "--all".as_ref(), "-p".as_ref(), "m".as_ref()])
+        .output()
+        .unwrap();
+
+    // the input is valid, so the only reason to fail is the conflicting flags
+    assert!(!out.status.success());
+    assert!(String::from_utf8_lossy(&out.stderr).contains("cannot be used with"));
+    assert!(!dir.join("in_rosepine_moon.png").exists());
+}
