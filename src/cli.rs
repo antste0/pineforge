@@ -15,12 +15,16 @@ pub struct Args {
     pub output: Option<PathBuf>,
 
     /// Palette variant to map colors to
-    #[arg(short, long, value_enum, default_value_t = Palette::R)]
+    #[arg(short, long, value_enum, default_value_t = Palette::R, conflicts_with = "all")]
     pub palette: Palette,
 
     /// Disable Floyd-Steinberg dithering (better for flat graphics, logos, pixel art)
     #[arg(long = "no-dither", action = ArgAction::SetFalse)]
     pub dither: bool,
+
+    /// Generate all 3 variants
+    #[arg(long, action = ArgAction::SetTrue, conflicts_with = "palette")]
+    pub all: bool,
 }
 
 impl Args {

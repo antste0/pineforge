@@ -2,13 +2,13 @@ mod cli;
 mod color;
 mod dither;
 mod palette;
+mod process;
 
 use clap::Parser;
-use image::{DynamicImage, ImageFormat, ImageReader};
+use image::ImageReader;
 
 use cli::Args;
-use color::{map_colors, rgb_to_oklab};
-use dither::dither;
+use color::rgb_to_oklab;
 
 fn main() {
     let args = Args::parse();
@@ -22,24 +22,9 @@ fn main() {
         .expect("failed to decode image");
     println!("Processing {}", &args.input.display());
 
-    // remember whether the original had transparency
-    let has_alpha = img.color().has_alpha();
-    // normalize every input format to 8-bit RGBA
-    let mut img = img.to_rgba8();
-
-    if args.dither {
-        dither(&mut img, &palette);
+    if args.all {
+        process::process_all(&img, args.dither, &output);
     } else {
-        map_colors(&mut img, &palette);
+        process::process_single_palette(&img, args.dither, &palette, &output);
     }
-
-    // drop alpha when unsupported/unused
-    let supports_alpha = !matches!(ImageFormat::from_path(&output), Ok(ImageFormat::Jpeg));
-    if has_alpha && supports_alpha {
-        img.save(&output)
-    } else {
-        DynamicImage::ImageRgba8(img).to_rgb8().save(&output)
-    }
-    .expect("failed to save image");
-    println!("Saved to {}", output.display());
 }

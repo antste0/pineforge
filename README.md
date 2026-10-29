@@ -18,11 +18,11 @@ The images in `examples/` and `thumbnails/` are from Pexels and are licensed und
 ## Features
 - All the official Rose Pine palettes (Rose Pine, Moon, Dawn)
 - Multithreaded for quick processing of large images
+- Ability to transform into all three palettes
 
 ## Features to add
 - Mixing colors from the palette with the one from the original image
 - Bulk transform
-- Ability to transform into all three palettes
 
 ## Installation
 Requires a [Rust toolchain](https://rustup.rs/), version 1.85 or newer.
@@ -55,3 +55,4 @@ pineforge -i logo.png --no-dither
 | `-o`, `--output <file>` | Output file, defaults to `<name>_rosepine.<ext>` next to the input |
 | `-p`, `--palette <r\|m\|d>` | `r` Rose Pine (default), `m` Moon, `d` Dawn |
 | `--no-dither` | Disable Floyd-Steinberg dithering, better for flat graphics, logos and pixel art |
+| `--all` | Get all 3 palettes as an output |

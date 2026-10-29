@@ -17,6 +17,16 @@ pub enum Palette {
 }
 
 impl Palette {
+    pub const ALL: [Palette; 3] = [Palette::R, Palette::M, Palette::D];
+
+    pub fn suffix(self) -> &'static str {
+        match self {
+            Palette::R => "main",
+            Palette::M => "moon",
+            Palette::D => "dawn",
+        }
+    }
+
     pub fn colors(self) -> [[u8; 3]; 15] {
         let hexes = match self {
             Palette::R => ROSE_PINE,
