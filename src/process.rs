@@ -33,9 +33,14 @@ pub fn process_all(img: &DynamicImage, has_dither: bool, output: &Path) {
     let stem = output.file_stem().and_then(|s| s.to_str()).unwrap_or("output");
     let extension = output.extension().and_then(|e| e.to_str()).unwrap_or("png");
 
-    for variant in Palette::ALL {
-        let palette = variant.colors().map(|c| (c, rgb_to_oklab(c)));
-        let path = output.with_file_name(format!("{stem}_{}.{extension}", variant.suffix()));
-        process_single_palette(img, has_dither, &palette, &path);
-    }
+    // dithering is sequential within one image, so the parallelism is across palettes
+    std::thread::scope(|s| {
+        for variant in Palette::ALL {
+            s.spawn(move || {
+                let palette = variant.colors().map(|c| (c, rgb_to_oklab(c)));
+                let path = output.with_file_name(format!("{stem}_{}.{extension}", variant.suffix()));
+                process_single_palette(img, has_dither, &palette, &path);
+            });
+        }
+    });
 }

@@ -43,10 +43,14 @@ RUSTFLAGS="-C target-cpu=x86-64" cargo build --release
 ```
 
 ## Usage
+The examples assume `pineforge` is on your `PATH`.
+Otherwise run `./target/release/pineforge`, or install it with `cargo install --path .`.
+
 ```sh
 pineforge -i photo.jpg
 pineforge -i photo.jpg -o out.png -p m
 pineforge -i logo.png --no-dither
+pineforge -i photo.jpg --all
 ```
 
 | Option | Description |
@@ -56,3 +60,6 @@ pineforge -i logo.png --no-dither
 | `-p`, `--palette <r\|m\|d>` | `r` Rose Pine (default), `m` Moon, `d` Dawn |
 | `--no-dither` | Disable Floyd-Steinberg dithering, better for flat graphics, logos and pixel art |
 | `--all` | Get all 3 palettes as an output |
+
+`--all` writes `<name>_rosepine_main.<ext>`, `<name>_rosepine_moon.<ext>` and `<name>_rosepine_dawn.<ext>`. Mutually exclusive with `-p`.
+With `-o`, the palette name is added to the given file name, so `-o out.png` gives `out_main.png`, `out_moon.png` and `out_dawn.png`.
