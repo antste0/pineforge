@@ -121,6 +121,21 @@ fn all_writes_every_palette_variant() {
 }
 
 #[test]
+fn all_with_output_uses_output_name() {
+    let dir = temp_dir("all_with_output");
+    let input = dir.join("in.png");
+    let output = dir.join("out.png");
+    gradient(false).save(&input).unwrap();
+
+    run(&["-i".as_ref(), input.as_os_str(), "-o".as_ref(), output.as_os_str(), "--all".as_ref()]);
+
+    for suffix in ["main", "moon", "dawn"] {
+        assert!(dir.join(format!("out_rosepine_{suffix}.png")).exists(), "missing out_rosepine_{suffix}.png");
+    }
+    assert!(!output.exists());
+}
+
+#[test]
 fn all_with_palette_fails() {
     let dir = temp_dir("all_with_palette");
     let input = dir.join("in.png");

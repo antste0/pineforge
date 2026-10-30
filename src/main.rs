@@ -12,7 +12,6 @@ use color::rgb_to_oklab;
 
 fn main() {
     let args = Args::parse();
-    let output = args.output_path();
     // convert the palette once up front instead of on every comparison
     let palette = args.palette.colors().map(|c| (c, rgb_to_oklab(c)));
 
@@ -23,8 +22,8 @@ fn main() {
     println!("Processing {}", &args.input.display());
 
     if args.all {
-        process::process_all(&img, args.dither, &output);
+        process::process_all(&img, args.dither, &args.base_path());
     } else {
-        process::process_single_palette(&img, args.dither, &palette, &output);
+        process::process_single_palette(&img, args.dither, &palette, &args.output_path());
     }
 }

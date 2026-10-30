@@ -37,6 +37,11 @@ impl Args {
         let ext = self.input.extension().and_then(|e| e.to_str()).unwrap_or("png");
         self.input.with_file_name(format!("{stem}_rosepine.{ext}"))
     }
+
+    // Name for --all to build on, without _rosepine so the variant names don't get it twice
+    pub fn base_path(&self) -> PathBuf {
+        self.output.clone().unwrap_or_else(|| self.input.clone())
+    }
 }
 
 #[cfg(test)]

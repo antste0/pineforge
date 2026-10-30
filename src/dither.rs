@@ -29,12 +29,12 @@ pub fn dither(img: &mut image::RgbaImage, palette: &[([u8; 3], [f32; 3])]) {
             let pixel = img.get_pixel_mut(x as u32, y as u32);
             pixel.0 = [rgb[0], rgb[1], rgb[2], pixel.0[3]];
 
-            // transparent pixels aren't seen, so their error shouldn't leak onto visible neighbors
+            // the error is weighted by alpha, so pixels that are barely visible don't push their error onto visible neighbors
             let weight = pixel.0[3] as f32 / 255.0;
             let picked = rgb.map(srgb_to_linear);
             let err = [0, 1, 2].map(|c| (wanted[c] - picked[c]) * weight);
 
-            // add a share of the error to the neighbor at (x + dx, y + dy), skipping ones outside the image
+            // add a share of the error to the neighbor at (x + dx * dir, y + dy), skipping ones outside the image
             let mut spread = |dx: isize, dy: usize, factor: f32| {
                 let nx = x as isize + dx * dir;
                 let ny = y + dy;

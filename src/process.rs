@@ -38,7 +38,7 @@ pub fn process_all(img: &DynamicImage, has_dither: bool, output: &Path) {
         for variant in Palette::ALL {
             s.spawn(move || {
                 let palette = variant.colors().map(|c| (c, rgb_to_oklab(c)));
-                let path = output.with_file_name(format!("{stem}_{}.{extension}", variant.suffix()));
+                let path = output.with_file_name(format!("{stem}_rosepine_{}.{extension}", variant.suffix()));
                 process_single_palette(img, has_dither, &palette, &path);
             });
         }

@@ -23,17 +23,18 @@ fn compute_srgb_to_linear(c: u8) -> f32 {
 
 // In RGB, distance between two colors doesn't match how different they look, so the "nearest" palette color often looks wrong
 // This maps a color into a space where it does: [lightness, green-red, blue-yellow]
-// R, G, B are mixed into three channels (l, m, s), compressed with a cube root, then mixed again into the final three values
 pub fn rgb_to_oklab(rgb: [u8; 3]) -> [f32; 3] {
     linear_to_oklab(rgb.map(srgb_to_linear))
 }
 
 // Same as rgb_to_oklab, for colors already converted with srgb_to_linear
 pub fn linear_to_oklab([r, g, b]: [f32; 3]) -> [f32; 3] {
+    // l, m and s are cone-like responses (long, medium, short wavelengths), they are intermediate values and not lightness or hue
     let l = (0.4122214708 * r + 0.5363325363 * g + 0.0514459929 * b).cbrt();
     let m = (0.2119034982 * r + 0.6806995451 * g + 0.1073969566 * b).cbrt();
     let s = (0.0883024619 * r + 0.2817188376 * g + 0.6299787005 * b).cbrt();
 
+    // turn the cone responses into lightness and the two opposing color axes
     [
         0.2104542553 * l + 0.7936177850 * m - 0.0040720468 * s,
         1.9779984951 * l - 2.4285922050 * m + 0.4505937099 * s,
