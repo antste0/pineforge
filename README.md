@@ -27,7 +27,7 @@ The images in `examples/` and `thumbnails/` are from Pexels and are licensed und
     - Folders/directories as inputs with optional recursion
 
 ## Installation
-Requires a [Rust toolchain](https://rustup.rs/), version 1.85 or newer.
+Requires a [Rust toolchain](https://rustup.rs/), version 1.88 or newer.
 
 ```sh
 git clone https://github.com/antste0/pineforge
@@ -71,4 +71,4 @@ cargo run --release -- -i photo.jpg
 | `--all` | Get all 3 palettes as an output |
 
 `--all` writes `<name>_rosepine_main.<ext>`, `<name>_rosepine_moon.<ext>` and `<name>_rosepine_dawn.<ext>`. Mutually exclusive with `-p`.
-With `-o`, the palette name is added to the given file name, so `-o out.png` gives `out_main.png`, `out_moon.png` and `out_dawn.png`.
+With `-o`, the palette name is added to the given file name, so `-o out.png` gives `out_rosepine_main.png`, `out_rosepine_moon.png` and `out_rosepine_dawn.png`.

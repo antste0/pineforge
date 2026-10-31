@@ -5,10 +5,6 @@ fn approx(a: f32, b: f32) -> bool {
     (a - b).abs() < 1e-3
 }
 
-fn palette() -> Vec<([u8; 3], [f32; 3])> {
-    Palette::R.colors().iter().map(|&c| (c, rgb_to_oklab(c))).collect()
-}
-
 #[test]
 fn srgb_to_linear_endpoints() {
     assert_eq!(srgb_to_linear(0), 0.0);
@@ -49,7 +45,7 @@ fn oklab_red_and_blue_hues() {
 
 #[test]
 fn nearest_color_of_palette_color_is_itself() {
-    let palette = palette();
+    let palette = Palette::R.entries();
     for &(rgb, lab) in &palette {
         assert_eq!(nearest_color(lab, &palette).0, rgb);
     }
@@ -57,14 +53,20 @@ fn nearest_color_of_palette_color_is_itself() {
 
 #[test]
 fn nearest_color_extremes() {
-    let palette = palette();
-    assert_eq!(nearest_color(rgb_to_oklab([0, 0, 0]), &palette).0, [0x19, 0x17, 0x24]);
-    assert_eq!(nearest_color(rgb_to_oklab([255, 255, 255]), &palette).0, [0xe0, 0xde, 0xf4]);
+    let palette = Palette::R.entries();
+    assert_eq!(
+        nearest_color(rgb_to_oklab([0, 0, 0]), &palette).0,
+        [0x19, 0x17, 0x24]
+    );
+    assert_eq!(
+        nearest_color(rgb_to_oklab([255, 255, 255]), &palette).0,
+        [0xe0, 0xde, 0xf4]
+    );
 }
 
 #[test]
 fn map_colors_uses_palette_and_keeps_alpha() {
-    let palette = palette();
+    let palette = Palette::R.entries();
     let mut img = image::RgbaImage::from_fn(16, 16, |x, y| {
         image::Rgba([(x * 16) as u8, (y * 16) as u8, 128, (x * y) as u8])
     });

@@ -2,12 +2,15 @@ use std::sync::LazyLock;
 
 use rayon::prelude::*;
 
+use crate::palette::PaletteEntry;
+
 // Pixel values aren't proportional to brightness - 128 is about a fifth of 255, not half
 // Colors have to be compared on real brightness, so this turns a 0-255 value into linear 0.0-1.0
 // Very dark values are scaled linearly, the rest go through a 2.4 power curve
 // powf is slow and there are only 256 possible inputs, so every result is computed once and looked up afterwards
 pub fn srgb_to_linear(c: u8) -> f32 {
-    static LUT: LazyLock<[f32; 256]> = LazyLock::new(|| std::array::from_fn(|i| compute_srgb_to_linear(i as u8)));
+    static LUT: LazyLock<[f32; 256]> =
+        LazyLock::new(|| std::array::from_fn(|i| compute_srgb_to_linear(i as u8)));
     LUT[c as usize]
 }
 
@@ -20,7 +23,6 @@ fn compute_srgb_to_linear(c: u8) -> f32 {
     }
 }
 
-
 // In RGB, distance between two colors doesn't match how different they look, so the "nearest" palette color often looks wrong
 // This maps a color into a space where it does: [lightness, green-red, blue-yellow]
 pub fn rgb_to_oklab(rgb: [u8; 3]) -> [f32; 3] {
@@ -28,6 +30,7 @@ pub fn rgb_to_oklab(rgb: [u8; 3]) -> [f32; 3] {
 }
 
 // Same as rgb_to_oklab, for colors already converted with srgb_to_linear
+#[allow(clippy::excessive_precision)]
 pub fn linear_to_oklab([r, g, b]: [f32; 3]) -> [f32; 3] {
     // l, m and s are cone-like responses (long, medium, short wavelengths), they are intermediate values and not lightness or hue
     let l = (0.4122214708 * r + 0.5363325363 * g + 0.0514459929 * b).cbrt();
@@ -51,7 +54,7 @@ fn color_distance(a: [f32; 3], b: [f32; 3]) -> f32 {
 // Takes an already converted color, so dithering can pass in values with error added
 // unwrap is safe because the palette is never empty
 // Distances are computed up front, comparing them inside min_by would compute each one twice
-pub fn nearest_color(lab: [f32; 3], palette: &[([u8; 3], [f32; 3])]) -> ([u8; 3], [f32; 3]) {
+pub fn nearest_color(lab: [f32; 3], palette: &[PaletteEntry]) -> PaletteEntry {
     *palette
         .iter()
         .map(|p| (color_distance(lab, p.1), p))
@@ -62,7 +65,7 @@ pub fn nearest_color(lab: [f32; 3], palette: &[([u8; 3], [f32; 3])]) -> ([u8; 3]
 
 // Replaces each pixel's color in place, leaving its alpha untouched
 // Every pixel is independent here, so they're split across threads (dithering can't do this, each pixel depends on the previous ones)
-pub fn map_colors(img: &mut image::RgbaImage, palette: &[([u8; 3], [f32; 3])]) {
+pub fn map_colors(img: &mut image::RgbaImage, palette: &[PaletteEntry]) {
     img.par_chunks_mut(4).for_each(|pixel| {
         let ([r, g, b], _) = nearest_color(rgb_to_oklab([pixel[0], pixel[1], pixel[2]]), palette);
         pixel[..3].copy_from_slice(&[r, g, b]);

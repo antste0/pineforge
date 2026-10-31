@@ -1,9 +1,10 @@
 use crate::color::{linear_to_oklab, nearest_color, srgb_to_linear};
+use crate::palette::PaletteEntry;
 
 // With only 15 colors, smooth gradients turn into flat bands
 // To hide that, each pixel's error (wanted color minus picked color) is passed to neighbors that haven't been processed yet
 // They lean the other way, so a small area averages out to the original color
-pub fn dither(img: &mut image::RgbaImage, palette: &[([u8; 3], [f32; 3])]) {
+pub fn dither(img: &mut image::RgbaImage, palette: &[PaletteEntry]) {
     let (w, h) = (img.width() as usize, img.height() as usize);
     // Neighboring dots blend in the eye by real brightness, so the error is tracked in linear RGB
     // Picking the nearest color still happens in the perceptual space
@@ -46,10 +47,10 @@ pub fn dither(img: &mut image::RgbaImage, palette: &[([u8; 3], [f32; 3])]) {
                     n[c] += err[c] * factor;
                 }
             };
-            spread(1, 0, 7.0 / 16.0);  // next in row
+            spread(1, 0, 7.0 / 16.0); // next in row
             spread(-1, 1, 3.0 / 16.0); // below, behind
-            spread(0, 1, 5.0 / 16.0);  // below
-            spread(1, 1, 1.0 / 16.0);  // below, ahead
+            spread(0, 1, 5.0 / 16.0); // below
+            spread(1, 1, 1.0 / 16.0); // below, ahead
         }
     }
 }

@@ -10,8 +10,15 @@ fn temp_dir(name: &str) -> PathBuf {
 }
 
 fn run(args: &[&std::ffi::OsStr]) -> std::process::Output {
-    let out = Command::new(env!("CARGO_BIN_EXE_pineforge")).args(args).output().unwrap();
-    assert!(out.status.success(), "{}", String::from_utf8_lossy(&out.stderr));
+    let out = Command::new(env!("CARGO_BIN_EXE_pineforge"))
+        .args(args)
+        .output()
+        .unwrap();
+    assert!(
+        out.status.success(),
+        "{}",
+        String::from_utf8_lossy(&out.stderr)
+    );
     out
 }
 
@@ -42,7 +49,12 @@ fn png_keeps_alpha() {
     let img = gradient(true);
     img.save(&input).unwrap();
 
-    run(&["-i".as_ref(), input.as_os_str(), "-o".as_ref(), output.as_os_str()]);
+    run(&[
+        "-i".as_ref(),
+        input.as_os_str(),
+        "-o".as_ref(),
+        output.as_os_str(),
+    ]);
 
     let result = image::open(&output).unwrap();
     assert!(result.color().has_alpha());
@@ -57,9 +69,17 @@ fn opaque_input_drops_alpha() {
     let dir = temp_dir("opaque");
     let input = dir.join("in.jpg");
     let output = dir.join("out.png");
-    image::DynamicImage::ImageRgba8(gradient(false)).to_rgb8().save(&input).unwrap();
+    image::DynamicImage::ImageRgba8(gradient(false))
+        .to_rgb8()
+        .save(&input)
+        .unwrap();
 
-    run(&["-i".as_ref(), input.as_os_str(), "-o".as_ref(), output.as_os_str()]);
+    run(&[
+        "-i".as_ref(),
+        input.as_os_str(),
+        "-o".as_ref(),
+        output.as_os_str(),
+    ]);
 
     assert!(!image::open(&output).unwrap().color().has_alpha());
 }
@@ -71,7 +91,12 @@ fn jpeg_output_from_transparent_input() {
     let output = dir.join("out.jpg");
     gradient(true).save(&input).unwrap();
 
-    run(&["-i".as_ref(), input.as_os_str(), "-o".as_ref(), output.as_os_str()]);
+    run(&[
+        "-i".as_ref(),
+        input.as_os_str(),
+        "-o".as_ref(),
+        output.as_os_str(),
+    ]);
 
     assert!(!image::open(&output).unwrap().color().has_alpha());
 }
@@ -81,9 +106,19 @@ fn no_dither_maps_to_single_color() {
     let dir = temp_dir("no_dither");
     let input = dir.join("in.png");
     let output = dir.join("out.png");
-    image::RgbaImage::from_pixel(8, 8, image::Rgba([128, 128, 128, 255])).save(&input).unwrap();
+    image::RgbaImage::from_pixel(8, 8, image::Rgba([128, 128, 128, 255]))
+        .save(&input)
+        .unwrap();
 
-    run(&["-i".as_ref(), input.as_os_str(), "-o".as_ref(), output.as_os_str(), "--no-dither".as_ref(), "-p".as_ref(), "m".as_ref()]);
+    run(&[
+        "-i".as_ref(),
+        input.as_os_str(),
+        "-o".as_ref(),
+        output.as_os_str(),
+        "--no-dither".as_ref(),
+        "-p".as_ref(),
+        "m".as_ref(),
+    ]);
 
     let out = image::open(&output).unwrap().to_rgb8();
     let first = out.get_pixel(0, 0);
@@ -112,11 +147,24 @@ fn all_writes_every_palette_variant() {
     // each variant must be identical to running that palette on its own
     for (suffix, palette) in [("main", "r"), ("moon", "m"), ("dawn", "d")] {
         let single = dir.join(format!("single_{suffix}.png"));
-        run(&["-i".as_ref(), input.as_os_str(), "-o".as_ref(), single.as_os_str(), "-p".as_ref(), palette.as_ref()]);
+        run(&[
+            "-i".as_ref(),
+            input.as_os_str(),
+            "-o".as_ref(),
+            single.as_os_str(),
+            "-p".as_ref(),
+            palette.as_ref(),
+        ]);
 
-        let all = image::open(dir.join(format!("in_rosepine_{suffix}.png"))).unwrap().to_rgb8();
+        let all = image::open(dir.join(format!("in_rosepine_{suffix}.png")))
+            .unwrap()
+            .to_rgb8();
         assert_eq!((all.width(), all.height()), (20, 10));
-        assert_eq!(all, image::open(&single).unwrap().to_rgb8(), "{suffix} differs from -p {palette}");
+        assert_eq!(
+            all,
+            image::open(&single).unwrap().to_rgb8(),
+            "{suffix} differs from -p {palette}"
+        );
     }
 }
 
@@ -127,10 +175,19 @@ fn all_with_output_uses_output_name() {
     let output = dir.join("out.png");
     gradient(false).save(&input).unwrap();
 
-    run(&["-i".as_ref(), input.as_os_str(), "-o".as_ref(), output.as_os_str(), "--all".as_ref()]);
+    run(&[
+        "-i".as_ref(),
+        input.as_os_str(),
+        "-o".as_ref(),
+        output.as_os_str(),
+        "--all".as_ref(),
+    ]);
 
     for suffix in ["main", "moon", "dawn"] {
-        assert!(dir.join(format!("out_rosepine_{suffix}.png")).exists(), "missing out_rosepine_{suffix}.png");
+        assert!(
+            dir.join(format!("out_rosepine_{suffix}.png")).exists(),
+            "missing out_rosepine_{suffix}.png"
+        );
     }
     assert!(!output.exists());
 }
@@ -142,7 +199,13 @@ fn all_with_palette_fails() {
     gradient(false).save(&input).unwrap();
 
     let out = Command::new(env!("CARGO_BIN_EXE_pineforge"))
-        .args(["-i".as_ref(), input.as_os_str(), "--all".as_ref(), "-p".as_ref(), "m".as_ref()])
+        .args([
+            "-i".as_ref(),
+            input.as_os_str(),
+            "--all".as_ref(),
+            "-p".as_ref(),
+            "m".as_ref(),
+        ])
         .output()
         .unwrap();
 

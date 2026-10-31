@@ -6,12 +6,11 @@ use crate::palette::Palette;
 
 #[derive(Parser, Debug)]
 #[command(version, about = "Transform any image to fit the Rose Pine palette")]
-
 pub struct Args {
-    #[arg(short, long, value_name="file")]
+    #[arg(short, long, value_name = "file")]
     pub input: PathBuf,
 
-    #[arg(short, long, value_name="file")]
+    #[arg(short, long, value_name = "file")]
     pub output: Option<PathBuf>,
 
     /// Palette variant to map colors to
@@ -33,8 +32,16 @@ impl Args {
         if let Some(o) = &self.output {
             return o.clone();
         }
-        let stem = self.input.file_stem().and_then(|s| s.to_str()).unwrap_or("output");
-        let ext = self.input.extension().and_then(|e| e.to_str()).unwrap_or("png");
+        let stem = self
+            .input
+            .file_stem()
+            .and_then(|s| s.to_str())
+            .unwrap_or("output");
+        let ext = self
+            .input
+            .extension()
+            .and_then(|e| e.to_str())
+            .unwrap_or("png");
         self.input.with_file_name(format!("{stem}_rosepine.{ext}"))
     }
 

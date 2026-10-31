@@ -2,12 +2,16 @@
 name = "pineforge"
 version = "0.1.1"
 edition = "2024"
+# image 0.25.10 needs 1.88, edition 2024 alone would allow 1.85
+rust-version = "1.88"
 description = "Transform any image to fit the Rose Pine palette"
 license = "GPL-3.0-or-later"
 repository = "https://github.com/antste0/pineforge"
 readme = "README.md"
 keywords = ["rose-pine", "image", "palette", "dithering", "cli"]
 categories = ["command-line-utilities", "multimedia::images"]
+# The README thumbnails still show on crates.io, it resolves relative links against the repository
+exclude = ["examples", "thumbnails", ".cargo", ".github", ".gitignore"]
 
 [dependencies]
 clap = { version = "4.6.7", features = ["derive"] }

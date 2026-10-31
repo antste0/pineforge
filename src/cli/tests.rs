@@ -7,7 +7,10 @@ fn parse(args: &[&str]) -> Args {
 #[test]
 fn output_path_next_to_input() {
     let args = parse(&["-i", "dir/sub/photo.jpg"]);
-    assert_eq!(args.output_path(), PathBuf::from("dir/sub/photo_rosepine.jpg"));
+    assert_eq!(
+        args.output_path(),
+        PathBuf::from("dir/sub/photo_rosepine.jpg")
+    );
 }
 
 #[test]

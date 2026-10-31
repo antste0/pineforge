@@ -1,7 +1,10 @@
 name: CI
 
+# pull_request is what runs CI for PRs from forks, since their commits are never pushed here
+# Branches in this repo with an open PR get checked twice, which is free for a public repo
 on:
   push:
+  pull_request:
 
 jobs:
   test:
@@ -15,3 +18,17 @@ jobs:
       - uses: Swatinem/rust-cache@v2
       - name: Run tests
         run: cargo test
+
+  # formatting and lints don't depend on the OS, so one runner is enough
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+      - uses: Swatinem/rust-cache@v2
+      - name: Check formatting
+        run: cargo fmt --check
+      - name: Clippy
+        run: cargo clippy --all-targets -- -D warnings
