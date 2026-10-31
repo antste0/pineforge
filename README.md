@@ -30,6 +30,13 @@ The images in `examples/` and `thumbnails/` are from Pexels and are licensed und
 Requires a [Rust toolchain](https://rustup.rs/), version 1.88 or newer.
 
 ```sh
+cargo install pineforge
+```
+
+This puts `pineforge` in `~/.cargo/bin`, which rustup adds to your `PATH`.
+
+### From source
+```sh
 git clone https://github.com/antste0/pineforge
 cd pineforge
 cargo build --release
@@ -37,16 +44,9 @@ cargo build --release
 
 The binary ends up in `target/release/pineforge`.
 
-### Older CPUs (pre-2015)
-On x86-64 the build targets CPUs from about 2015 onward (Intel Haswell, AMD Zen), which makes dithering about 2x faster. This however makes older CPUs unable to build or run the app. Build it for a generic x86-64 CPU instead:
-
-```sh
-RUSTFLAGS="-C target-cpu=x86-64" cargo build --release
-```
-
 ## Usage
 The examples assume `pineforge` is on your `PATH`.
-Otherwise run `./target/release/pineforge`, or install it with `cargo install --path .`.
+When built from source, run `./target/release/pineforge` instead, or install it with `cargo install --path .`.
 
 ```sh
 pineforge -i photo.jpg
