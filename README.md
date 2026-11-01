@@ -13,7 +13,7 @@ Transform any image to fit the Rose Pine palette, built in Rust
 
 [image used](https://www.pexels.com/photo/historic-architecture-and-clock-tower-in-ghent-30223875/) by Danique Veldhuis
 
-The images in `examples/` and `thumbnails/` are from Pexels and are licensed under the [Pexels License](https://www.pexels.com/license/), not GPL.
+The images in `thumbnails/` are from Pexels and are licensed under the [Pexels License](https://www.pexels.com/license/), not GPL.
 
 ## Features
 - All the official Rose Pine palettes (Rose Pine, Moon, Dawn)
