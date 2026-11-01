@@ -1,6 +1,7 @@
 mod cli;
 mod color;
 mod dither;
+mod filter;
 mod palette;
 mod process;
 
@@ -19,11 +20,11 @@ fn main() {
     println!("Processing {}", args.input.display());
 
     if args.all {
-        process::process_all(&img, args.dither, &args.base_path());
+        process::process_all(&img, args.method(), &args.base_path());
     } else {
         process::process_single_palette(
             &img,
-            args.dither,
+            args.method(),
             &args.palette.entries(),
             &args.output_path(),
         );

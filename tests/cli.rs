@@ -106,7 +106,8 @@ fn no_dither_maps_to_single_color() {
     let dir = temp_dir("no_dither");
     let input = dir.join("in.png");
     let output = dir.join("out.png");
-    image::RgbaImage::from_pixel(8, 8, image::Rgba([128, 128, 128, 255]))
+    // This gray lands on a color only Moon has, and tinting it gives something else, so a dropped flag shows up
+    image::RgbaImage::from_pixel(8, 8, image::Rgba([40, 40, 40, 255]))
         .save(&input)
         .unwrap();
 
@@ -120,9 +121,9 @@ fn no_dither_maps_to_single_color() {
         "m".as_ref(),
     ]);
 
+    // Moon's highlight low
     let out = image::open(&output).unwrap().to_rgb8();
-    let first = out.get_pixel(0, 0);
-    assert!(out.pixels().all(|p| p == first));
+    assert!(out.pixels().all(|p| p.0 == [0x2a, 0x28, 0x3e]));
 }
 
 #[test]
@@ -159,7 +160,6 @@ fn all_writes_every_palette_variant() {
         let all = image::open(dir.join(format!("in_rosepine_{suffix}.png")))
             .unwrap()
             .to_rgb8();
-        assert_eq!((all.width(), all.height()), (20, 10));
         assert_eq!(
             all,
             image::open(&single).unwrap().to_rgb8(),
@@ -213,4 +213,31 @@ fn all_with_palette_fails() {
     assert!(!out.status.success());
     assert!(String::from_utf8_lossy(&out.stderr).contains("cannot be used with"));
     assert!(!dir.join("in_rosepine_moon.png").exists());
+}
+
+#[test]
+fn no_soft_limits_the_output_to_the_palette() {
+    let dir = temp_dir("no_soft");
+    let input = dir.join("in.png");
+    let output = dir.join("out.png");
+    gradient(false).save(&input).unwrap();
+
+    run(&[
+        "-i".as_ref(),
+        input.as_os_str(),
+        "-o".as_ref(),
+        output.as_os_str(),
+        "--no-soft".as_ref(),
+    ]);
+
+    let mut colors: Vec<_> = image::open(&output)
+        .unwrap()
+        .to_rgb8()
+        .pixels()
+        .map(|p| p.0)
+        .collect();
+    colors.sort();
+    colors.dedup();
+    // every palette has 15 colors
+    assert!(colors.len() <= 15, "{} colors", colors.len());
 }

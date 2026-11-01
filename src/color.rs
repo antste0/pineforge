@@ -45,8 +45,36 @@ pub fn linear_to_oklab([r, g, b]: [f32; 3]) -> [f32; 3] {
     ]
 }
 
+// Reverse of rgb_to_oklab, for filters that produce colors outside the palette
+// Results outside what a pixel can show are clamped per channel
+pub fn oklab_to_rgb(lab: [f32; 3]) -> [u8; 3] {
+    oklab_to_linear(lab).map(linear_to_srgb)
+}
+
+#[allow(clippy::excessive_precision)]
+fn oklab_to_linear([l, a, b]: [f32; 3]) -> [f32; 3] {
+    let l_ = (l + 0.3963377774 * a + 0.2158037573 * b).powi(3);
+    let m_ = (l - 0.1055613458 * a - 0.0638541728 * b).powi(3);
+    let s_ = (l - 0.0894841775 * a - 1.2914855480 * b).powi(3);
+    [
+        4.0767416621 * l_ - 3.3077115913 * m_ + 0.2309699292 * s_,
+        -1.2684380046 * l_ + 2.6097574011 * m_ - 0.3413193965 * s_,
+        -0.0041960863 * l_ - 0.7034186147 * m_ + 1.7076147010 * s_,
+    ]
+}
+
+fn linear_to_srgb(c: f32) -> u8 {
+    let c = c.clamp(0.0, 1.0);
+    let s = if c <= 0.0031308 {
+        c * 12.92
+    } else {
+        1.055 * c.powf(1.0 / 2.4) - 0.055
+    };
+    (s * 255.0).round() as u8
+}
+
 // Squared distance - sqrt is skipped because it doesn't change which color is closest
-fn color_distance(a: [f32; 3], b: [f32; 3]) -> f32 {
+pub fn color_distance(a: [f32; 3], b: [f32; 3]) -> f32 {
     (0..3).map(|i| (a[i] - b[i]).powi(2)).sum()
 }
 

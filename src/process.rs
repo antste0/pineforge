@@ -4,11 +4,19 @@ use image::{DynamicImage, ImageFormat};
 
 use crate::color::map_colors;
 use crate::dither::dither;
+use crate::filter::{Mix, soft_map};
 use crate::palette::{Palette, PaletteEntry};
+
+// Quantize limits the output to palette colors, Soft only tints the image toward them
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub enum Method {
+    Quantize { dither: bool },
+    Soft { softness: f32, mix: Mix },
+}
 
 pub fn process_single_palette(
     img: &DynamicImage,
-    has_dither: bool,
+    method: Method,
     palette: &[PaletteEntry],
     output: &Path,
 ) {
@@ -17,10 +25,10 @@ pub fn process_single_palette(
     // normalize every input format to 8-bit RGBA
     let mut img = img.to_rgba8();
 
-    if has_dither {
-        dither(&mut img, palette);
-    } else {
-        map_colors(&mut img, palette);
+    match method {
+        Method::Quantize { dither: true } => dither(&mut img, palette),
+        Method::Quantize { dither: false } => map_colors(&mut img, palette),
+        Method::Soft { softness, mix } => soft_map(&mut img, palette, softness, mix),
     }
 
     // drop alpha when unsupported/unused
@@ -34,7 +42,7 @@ pub fn process_single_palette(
     println!("Saved to {}", output.display());
 }
 
-pub fn process_all(img: &DynamicImage, has_dither: bool, output: &Path) {
+pub fn process_all(img: &DynamicImage, method: Method, output: &Path) {
     let stem = output
         .file_stem()
         .and_then(|s| s.to_str())
@@ -47,7 +55,7 @@ pub fn process_all(img: &DynamicImage, has_dither: bool, output: &Path) {
             s.spawn(move || {
                 let path = output
                     .with_file_name(format!("{stem}_rosepine_{}.{extension}", variant.suffix()));
-                process_single_palette(img, has_dither, &variant.entries(), &path);
+                process_single_palette(img, method, &variant.entries(), &path);
             });
         }
     });

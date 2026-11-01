@@ -19,9 +19,9 @@ The images in `examples/` and `thumbnails/` are from Pexels and are licensed und
 - All the official Rose Pine palettes (Rose Pine, Moon, Dawn)
 - Multithreaded for quick processing of large images
 - Ability to transform into all three palettes at once
+- Tints the image toward the palette by default, with an option to replace every color instead
 
 ## Features to add
-- Mixing colors from the palette with the one from the original image
 - Bulk transform
     - Multiple files as input
     - Folders/directories as inputs with optional recursion
@@ -51,8 +51,10 @@ When built from source, run `./target/release/pineforge` instead, or install it 
 ```sh
 pineforge -i photo.jpg
 pineforge -i photo.jpg -o out.png -p m
-pineforge -i logo.png --no-dither
+pineforge -i photo.jpg --strength 0.8
 pineforge -i photo.jpg --all
+pineforge -i photo.jpg --keep-lightness
+pineforge -i logo.png --no-dither
 ```
 
 Alternatively, use the `cargo run --release` command with the flags you want.
@@ -67,8 +69,15 @@ cargo run --release -- -i photo.jpg
 | `-i`, `--input <file>` | Image to transform (required) |
 | `-o`, `--output <file>` | Output file, defaults to `<name>_rosepine.<ext>` next to the input |
 | `-p`, `--palette <r\|m\|d>` | `r` Rose Pine (default), `m` Moon, `d` Dawn |
-| `--no-dither` | Disable Floyd-Steinberg dithering, better for flat graphics, logos and pixel art |
 | `--all` | Get all 3 palettes as an output |
+| `--strength <0-1>` | How strongly the colors move toward the palette, defaults to `0.6` |
+| `--softness <n>` | How many nearby palette colors get blended, defaults to `0.02`, larger values give smoother and grayer results |
+| `--keep-lightness` | Keep the original brightness and change only hue and saturation |
+| `--no-soft` | Replace every pixel with one of the 15 palette colors instead of tinting |
+| `--no-dither` | Like `--no-soft` but without Floyd-Steinberg dithering, better for flat graphics, logos and pixel art |
+
+By default each pixel is blended toward the palette colors closest to it, so the output isn't limited to 15 colors.
+`--strength`, `--softness` and `--keep-lightness` can't be combined with `--no-soft` or `--no-dither`.
 
 `--all` writes `<name>_rosepine_main.<ext>`, `<name>_rosepine_moon.<ext>` and `<name>_rosepine_dawn.<ext>`. Mutually exclusive with `-p`.
 With `-o`, the palette name is added to the given file name, so `-o out.png` gives `out_rosepine_main.png`, `out_rosepine_moon.png` and `out_rosepine_dawn.png`.
