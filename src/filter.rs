@@ -1,6 +1,4 @@
-use rayon::prelude::*;
-
-use crate::color::{color_distance, oklab_to_rgb, rgb_to_oklab};
+use crate::color::{color_distance, map_unique_colors, oklab_to_rgb, rgb_to_oklab};
 use crate::palette::PaletteEntry;
 
 // Controls how much of the palette color ends up in the output
@@ -15,14 +13,14 @@ pub struct Mix {
 pub fn soft_map(img: &mut image::RgbaImage, palette: &[PaletteEntry], softness: f32, mix: Mix) {
     // Index 0 is lightness, skipping it changes only hue and saturation
     let first = if mix.keep_lightness { 1 } else { 0 };
-    img.par_chunks_mut(4).for_each(|pixel| {
-        let orig = rgb_to_oklab([pixel[0], pixel[1], pixel[2]]);
+    map_unique_colors(img, |rgb| {
+        let orig = rgb_to_oklab(rgb);
         let target = soft_target(orig, palette, softness);
         let mut out = orig;
         for c in first..3 {
             out[c] += (target[c] - orig[c]) * mix.strength;
         }
-        pixel[..3].copy_from_slice(&oklab_to_rgb(out));
+        oklab_to_rgb(out)
     });
 }
 
