@@ -63,6 +63,8 @@ Alternatively, use the `cargo run --release` command with the flags you want.
 cargo run --release -- -i photo.jpg
 ```
 
+Supported formats are JPEG, PNG and WebP.
+
 
 | Option | Description |
 | --- | --- |

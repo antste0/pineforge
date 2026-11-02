@@ -15,7 +15,8 @@ exclude = ["examples", "thumbnails", ".github", ".gitignore"]
 
 [dependencies]
 clap = { version = "4.6.7", features = ["derive"] }
-image = "0.25.10"
+# Wallpapers come as JPEG, PNG or WebP, the default formats more than double the build time (mostly the AVIF encoder)
+image = { version = "0.25.10", default-features = false, features = ["jpeg", "png", "webp"] }
 rayon = "1.12.0"
 
 [profile.release]
