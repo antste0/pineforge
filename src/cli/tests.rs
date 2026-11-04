@@ -39,7 +39,7 @@ fn method_defaults_to_soft() {
         Method::Soft {
             softness: 0.02,
             mix: Mix {
-                strength: 0.6,
+                strength: 0.7,
                 keep_lightness: false
             }
         }
@@ -63,7 +63,7 @@ fn method_variants() {
         Method::Soft {
             softness: 0.02,
             mix: Mix {
-                strength: 0.6,
+                strength: 0.7,
                 keep_lightness: true
             }
         }

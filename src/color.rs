@@ -1,4 +1,5 @@
 use std::sync::LazyLock;
+use std::sync::atomic::{AtomicU64, Ordering};
 
 use rayon::prelude::*;
 
@@ -92,11 +93,45 @@ pub fn nearest_color(lab: [f32; 3], palette: &[PaletteEntry]) -> PaletteEntry {
 }
 
 // Replaces each pixel's color in place, leaving its alpha untouched
-// Every pixel is independent here, so they're split across threads (dithering can't do this, each pixel depends on the previous ones)
+// Every pixel is independent here, so it can go through map_unique_colors (dithering can't, each pixel depends on the previous ones)
 pub fn map_colors(img: &mut image::RgbaImage, palette: &[PaletteEntry]) {
-    img.par_chunks_mut(4).for_each(|pixel| {
-        let ([r, g, b], _) = nearest_color(rgb_to_oklab([pixel[0], pixel[1], pixel[2]]), palette);
-        pixel[..3].copy_from_slice(&[r, g, b]);
+    map_unique_colors(img, |rgb| nearest_color(rgb_to_oklab(rgb), palette).0);
+}
+
+// Replaces the RGB of every pixel with f(RGB), leaving alpha untouched
+// The result depends only on the RGB value, and even large photos have about 1-10% unique colors, so each one is computed once
+// A table indexed by the whole 0xRRGGBB value makes every lookup a single read, unlike sorting or hashing
+// The table is 48 MB, but it starts zeroed so the OS only backs the pages that actually get written
+pub fn map_unique_colors(img: &mut image::RgbaImage, f: impl Fn([u8; 3]) -> [u8; 3] + Sync) {
+    let key = |p: &[u8]| (p[0] as usize) << 16 | (p[1] as usize) << 8 | p[2] as usize;
+
+    // One bit per possible color, set by many threads at once so it has to be atomic
+    let seen: Vec<AtomicU64> = (0..1 << 18).map(|_| AtomicU64::new(0)).collect();
+    img.par_chunks(4).for_each(|p| {
+        let k = key(p);
+        seen[k >> 6].fetch_or(1 << (k & 63), Ordering::Relaxed);
+    });
+
+    // Each bitmap word covers 64 neighboring table entries, so threads never write to the same chunk
+    let mut table = vec![[0u8; 3]; 1 << 24];
+    table
+        .par_chunks_mut(64)
+        .zip(&seen)
+        .enumerate()
+        .for_each(|(word, (chunk, bits))| {
+            let mut bits = bits.load(Ordering::Relaxed);
+            while bits != 0 {
+                let bit = bits.trailing_zeros() as usize;
+                let k = word << 6 | bit;
+                chunk[bit] = f([(k >> 16) as u8, (k >> 8) as u8, k as u8]);
+                // Clears the lowest set bit
+                bits &= bits - 1;
+            }
+        });
+
+    img.par_chunks_mut(4).for_each(|p| {
+        let rgb = table[key(p)];
+        p[..3].copy_from_slice(&rgb);
     });
 }
 
