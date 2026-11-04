@@ -1,6 +1,6 @@
 [package]
 name = "pineforge"
-version = "0.1.1"
+version = "0.2.0"
 edition = "2024"
 # image 0.25.10 needs 1.88, edition 2024 alone would allow 1.85
 rust-version = "1.88"

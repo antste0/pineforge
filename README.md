@@ -4,14 +4,41 @@ Transform any image to fit the Rose Pine palette, built in Rust
 ## Examples
 <table>
   <tr>
-    <td align="center" width="25%"><img src="./thumbnails/pexels-daniqux-30223875.jpg" width="100%" alt="Original"><br>Original</td>
-    <td align="center" width="25%"><img src="./thumbnails/pexels-daniqux-30223875_rosepine.jpg" width="100%" alt="Rose Pine"><br>Rose Pine</td>
-    <td align="center" width="25%"><img src="./thumbnails/pexels-daniqux-30223875_dawn.jpg" width="100%" alt="Rose Pine Dawn"><br>Rose Pine Dawn</td>
-    <td align="center" width="25%"><img src="./thumbnails/pexels-daniqux-30223875_moon.jpg" width="100%" alt="Rose Pine Moon"><br>Rose Pine Moon</td>
+    <td align="center" width="25%"><img src="./thumbnails/chicago_skyline/pexels-guillermo-gallegos-2147620696-33749825.jpg" width="100%" alt="Original"><br>Original</td>
+    <td align="center" width="25%"><img src="./thumbnails/chicago_skyline/pexels-guillermo-gallegos-2147620696-33749825_rosepine_main.jpg" width="100%" alt="Rose Pine"><br>Rose Pine</td>
+    <td align="center" width="25%"><img src="./thumbnails/chicago_skyline/pexels-guillermo-gallegos-2147620696-33749825_rosepine_dawn.jpg" width="100%" alt="Rose Pine Dawn"><br>Rose Pine Dawn</td>
+    <td align="center" width="25%"><img src="./thumbnails/chicago_skyline/pexels-guillermo-gallegos-2147620696-33749825_rosepine_moon.jpg" width="100%" alt="Rose Pine Moon"><br>Rose Pine Moon</td>
   </tr>
 </table>
 
-[image used](https://www.pexels.com/photo/historic-architecture-and-clock-tower-in-ghent-30223875/) by Danique Veldhuis
+[image](https://www.pexels.com/photo/aerial-view-of-chicago-skyline-at-dawn-33749825/) by [Guillermo Gallegos](https://www.instagram.com/M3mo10/)
+
+<details>
+<summary>More examples</summary>
+
+<table>
+  <tr>
+    <td align="center" width="25%"><img src="./thumbnails/hosta_leaves/pexels-natalya-sh-83912098-8975687.jpg" width="100%" alt="Original"><br>Original</td>
+    <td align="center" width="25%"><img src="./thumbnails/hosta_leaves/pexels-natalya-sh-83912098-8975687_rosepine_main.jpg" width="100%" alt="Rose Pine"><br>Rose Pine</td>
+    <td align="center" width="25%"><img src="./thumbnails/hosta_leaves/pexels-natalya-sh-83912098-8975687_rosepine_dawn.jpg" width="100%" alt="Rose Pine Dawn"><br>Rose Pine Dawn</td>
+    <td align="center" width="25%"><img src="./thumbnails/hosta_leaves/pexels-natalya-sh-83912098-8975687_rosepine_moon.jpg" width="100%" alt="Rose Pine Moon"><br>Rose Pine Moon</td>
+  </tr>
+</table>
+
+[image](https://www.pexels.com/photo/green-leaves-in-close-up-photography-8975687/) by Natalya Sh
+
+<table>
+  <tr>
+    <td align="center" width="25%"><img src="./thumbnails/ghent_cityscape/pexels-daniqux-30223875.jpg" width="100%" alt="Original"><br>Original</td>
+    <td align="center" width="25%"><img src="./thumbnails/ghent_cityscape/pexels-daniqux-30223875_rosepine.jpg" width="100%" alt="Rose Pine"><br>Rose Pine</td>
+    <td align="center" width="25%"><img src="./thumbnails/ghent_cityscape/pexels-daniqux-30223875_dawn.jpg" width="100%" alt="Rose Pine Dawn"><br>Rose Pine Dawn</td>
+    <td align="center" width="25%"><img src="./thumbnails/ghent_cityscape/pexels-daniqux-30223875_moon.jpg" width="100%" alt="Rose Pine Moon"><br>Rose Pine Moon</td>
+  </tr>
+</table>
+
+[image](https://www.pexels.com/photo/historic-architecture-and-clock-tower-in-ghent-30223875/) by [Danique Veldhuis](https://www.instagram.com/Shotsbydaniqux)
+
+</details>
 
 The images in `thumbnails/` are from Pexels and are licensed under the [Pexels License](https://www.pexels.com/license/), not GPL.
 
@@ -72,7 +99,7 @@ Supported formats are JPEG, PNG and WebP.
 | `-o`, `--output <file>` | Output file, defaults to `<name>_rosepine.<ext>` next to the input |
 | `-p`, `--palette <r\|m\|d>` | `r` Rose Pine (default), `m` Moon, `d` Dawn |
 | `--all` | Get all 3 palettes as an output |
-| `--strength <0-1>` | How strongly the colors move toward the palette, defaults to `0.6` |
+| `--strength <0-1>` | How strongly the colors move toward the palette, defaults to `0.7` |
 | `--softness <n>` | How many nearby palette colors get blended, defaults to `0.02`, larger values give smoother and grayer results |
 | `--keep-lightness` | Keep the original brightness and change only hue and saturation |
 | `--no-soft` | Replace every pixel with one of the 15 palette colors instead of tinting |

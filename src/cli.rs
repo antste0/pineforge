@@ -33,7 +33,7 @@ pub struct Args {
     pub all: bool,
 
     /// How far the colors move toward the palette, 0 keeps the original
-    #[arg(long, value_name = "0-1", default_value_t = 0.6, value_parser = parse_strength, conflicts_with_all = ["soft", "dither"])]
+    #[arg(long, value_name = "0-1", default_value_t = 0.7, value_parser = parse_strength, conflicts_with_all = ["soft", "dither"])]
     pub strength: f32,
 
     /// How many palette colors get blended, small values stick to the nearest one
