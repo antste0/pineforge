@@ -1,6 +1,9 @@
 # pineforge
 Transform any image to fit the Rose Pine palette, built in Rust
 
+[![Crates.io Version](https://img.shields.io/crates/v/pineforge?style=plastic&logo=rust)](https://crates.io/crates/pineforge)
+[![CI](https://img.shields.io/github/actions/workflow/status/antste0/pineforge/ci.yml?branch=main&style=plastic&logo=github&label=CI)](https://github.com/antste0/pineforge/actions/workflows/ci.yml)
+
 ## Examples
 <table>
   <tr>
